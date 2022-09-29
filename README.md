@@ -8,9 +8,9 @@ To make project compile simple, each part is individual and has its own file.
 
 eg. 
 ```
-cd matrixMultiply 
+cd matrix_multiply 
 make
-./test_matrixMul
+./matMul
 ```
 
 
