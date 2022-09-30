@@ -215,6 +215,7 @@ endif
 endif
 
 ALL_CCFLAGS += --threads 0 --std=c++11
+LIBRARIES += -lcublas
 
 ifeq ($(SAMPLE_ENABLED),0)
 EXEC ?= @echo "[@]"
@@ -231,7 +232,7 @@ else
 	@echo "Sample is ready - all dependencies have been met"
 endif
 
-matMul: matMul1DKernel.cu matMul2DKernel.cu testMatMul.cu
+matMul: matMul1DKernel.cu matMul2DKernel.cu matMulCublasKernel.cu testMatMul.cu
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 
 clean:

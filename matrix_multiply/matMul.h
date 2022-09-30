@@ -105,8 +105,34 @@ inline void ConstantInit(float *data, int size, float val)
     }
 }
 
+inline bool ResultCheck(float *h_C,int sizeC, int wA, const float valB) {
+    printf("Checking computed result for correctness: ");
+    bool correct = true;
+    
+    // test relative error by the formula
+    //     |<x, y>_cpu - <x,y>_gpu|/<|x|, |y|>  < eps
+    double eps = 1.e-6; // machine zero
+
+    for (int i = 0; i < sizeC; i++) {
+        double abs_err = fabs(h_C[i] - (wA* valB));
+        double dot_length = wA;
+        double abs_val = fabs(h_C[i]);
+        double rel_err = abs_err / abs_val / dot_length;
+
+        if (rel_err > eps) {
+            printf("Error! Matrix[%05d]=%.8f, ref=%.8f error term is > %E\n", i, h_C[i], wA * valB, eps);
+            correct = false;
+        }
+    }
+
+    printf("%s\n", correct ? "Result = PASS" : "Result = FAIL");
+    return correct;
+}
+
 int MatrixMul1DTest(int argc, char **argv, int threadSize, int iterNum, const dim3 &dimsA, const dim3 &dimsB,
                     bool useShMem);
 
 int MatMul2DTest(int argc, char **argv, int thblockSize, int iterNum, const dim3 &dimsA, const dim3 &dimsB,
                  bool useAnySize);
+
+int MatMulCublasTest(int argc, char **argv, int blockSize, int iterNum, const dim3 &dimsA, const dim3 &dimsB);

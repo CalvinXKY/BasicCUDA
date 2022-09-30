@@ -15,6 +15,7 @@ enum ALGO_TYPE {
     MatMul_1D_KERNEL_WITH_SHARED_MEMORY,
     MatMul_2D_KERENEL_BLOCK_MULTIPLES_SIZE,
     MatMul_2D_KERNEL_ANY_SIZE,
+    MatMul_CUBLAS_SGEMM_KERNEL,
 };
 
 /**
@@ -39,8 +40,8 @@ int main(int argc, char **argv)
         printf("      -wA=WidthA -hA=HeightA (Width x Height of Matrix A)\n");
         printf("      -wB=WidthB -hB=HeightB (Width x Height of Matrix B)\n");
         printf("      -iter=n Iteration numbers of algorithm. Default:500 \n");
-        printf("      -algo=[0|1|2|3|4] 0: Test all, 1: MatMul_1D_KERENL, 2:MatMul_1D_KERNEL_WITH_SHARED_MEMORY, "
-               "3: MatMul_2D_KERENEL_BLOCK_MULTIPLES_SIZE, 4: MatMul_2D_KERNEL_ANY_SIZE\n");
+        printf("      -algo=[0|1|2|3|4|5] 0: Test all, 1: MatMul_1D_KERENL, 2:MatMul_1D_KERNEL_WITH_SHARED_MEMORY, "
+               "3: MatMul_2D_KERENEL_BLOCK_MULTIPLES_SIZE, 4: MatMul_2D_KERNEL_ANY_SIZE, 5:MatMul_CUBLAS_SGEMM_KERNEL\n");
         printf("Note: Outer matrix dimensions of A & B matrices"
                " must be equal.\n");
 
@@ -113,6 +114,9 @@ int main(int argc, char **argv)
         case MatMul_2D_KERNEL_ANY_SIZE:
             checkResult(MatMul2DTest(argc, argv, blockSize, iterationNum, dimsA, dimsB, true));
             break;
+        case MatMul_CUBLAS_SGEMM_KERNEL:
+            checkResult(MatMulCublasTest(argc, argv, blockSize, iterationNum, dimsA, dimsB));
+            break;
         default:
             printf("========================= 1D blocks without shared memory =================\n");
             checkResult(MatrixMul1DTest(argc, argv, threadsPerBlock, iterationNum, dimsA, dimsB, false));
@@ -124,6 +128,8 @@ int main(int argc, char **argv)
             }
             printf("========================= 2D blocks with any size ========================\n");
             checkResult(MatMul2DTest(argc, argv, blockSize, iterationNum, dimsA, dimsB, true));
+            printf("========================= CUBLAS Sgemm kernel ========================\n");
+            checkResult(MatMulCublasTest(argc, argv, blockSize, iterationNum, dimsA, dimsB));
             break;
     }
 

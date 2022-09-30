@@ -168,7 +168,7 @@ template <int BLOCK_SIZE> __global__ void MatMulKernel2DBlockMultiplesSize(float
 }
 
 /**
- * Run a simple test of matrix multiplication using CUDA
+ * Run a simple test of matrix multiplication with 2D blocks.
  */
 int MatMul2DTest(int argc, char **argv, int blockSize, int iterNum, const dim3 &dimsA, const dim3 &dimsB,
                  bool useAnySize)
@@ -220,7 +220,6 @@ int MatMul2DTest(int argc, char **argv, int blockSize, int iterNum, const dim3 &
     // Setup execution parameters
     dim3 threads(blockSize, blockSize);
     dim3 grid;
-    // dim3 grid(4, 4);
 
     // Create and start timer
     printf("Computing result using MatMul2DTest Kernel. \n");
@@ -284,26 +283,7 @@ int MatMul2DTest(int argc, char **argv, int blockSize, int iterNum, const dim3 &
     checkCudaErrors(cudaMemcpyAsync(h_C, d_C, mem_size_C, cudaMemcpyDeviceToHost, stream));
     checkCudaErrors(cudaStreamSynchronize(stream));
 
-    printf("Checking computed result for correctness: ");
-    bool correct = true;
-
-    // test relative error by the formula
-    //     |<x, y>_cpu - <x,y>_gpu|/<|x|, |y|>  < eps
-    double eps = 1.e-6; // machine zero
-
-    for (int i = 0; i < static_cast<int>(dimsC.x * dimsC.y); i++) {
-        double abs_err = fabs(h_C[i] - (dimsA.x * valB));
-        double dot_length = dimsA.x;
-        double abs_val = fabs(h_C[i]);
-        double rel_err = abs_err / abs_val / dot_length;
-
-        if (rel_err > eps) {
-            printf("Error! Matrix[%05d]=%.8f, ref=%.8f error term is > %E\n", i, h_C[i], dimsA.x * valB, eps);
-            correct = false;
-        }
-    }
-
-    printf("%s\n", correct ? "Result = PASS" : "Result = FAIL");
+    bool ret = ResultCheck(h_C, static_cast<int>(dimsC.x * dimsC.y), dimsA.x, valB);
 
     // Clean up memory
     checkCudaErrors(cudaFreeHost(h_A));
@@ -316,7 +296,7 @@ int MatMul2DTest(int argc, char **argv, int blockSize, int iterNum, const dim3 &
     checkCudaErrors(cudaEventDestroy(stop));
     checkCudaErrors(cudaStreamDestroy(stream));
 
-    if (correct) {
+    if (ret) {
         return EXIT_SUCCESS;
     } else {
         return EXIT_FAILURE;

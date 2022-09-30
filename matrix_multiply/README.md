@@ -1,9 +1,5 @@
 # matMul - Matrix Multiplication
 
-## Description
-
-This sample implements matrix multiplication.  It has different versions of realization.
-
 ## Build and Run
 ```
 $ cd <dir>
@@ -24,7 +20,8 @@ Usage -device=n (n >= 0 for deviceID)
       -wA=WidthA -hA=HeightA (Width x Height of Matrix A)
       -wB=WidthB -hB=HeightB (Width x Height of Matrix B)
       -iter=n Iteration numbers of algorithm. Default:500
-      -algo=[0|1|2|3|4] 0: Test all, 1: MatMul_1D_KERENL, 2:MatMul_1D_KERNEL_WITH_SHARED_MEMORY, 3: MatMul_2D_KERENEL_BLOCK_MULTIPLES_SIZE, 4: MatMul_2D_KERNEL_ANY_SIZE
+      -algo=[0|1|2|3|4|5] 0: Test all, 1: MatMul_1D_KERENL, 2:MatMul_1D_KERNEL_WITH_SHARED_MEMORY, 3: MatMul_2D_KERENEL_BLOCK_MULTIPLES_SIZE, 4: MatMul_2D_KERNEL_ANY_SIZE 
+      5: MatMul_CUBLAS_SGEMM_KERNEL
 Note: Outer matrix dimensions of A & B matrices must be equal.
 
 ```
@@ -44,3 +41,8 @@ Performance= 111.46 GFlop/s, Time= 0.062 msec, Size= 6864000 Ops, WorkgroupSize=
 Checking computed result for correctness: Result = PASS
 ```
 
+
+## Description
+This sample implements matrix multiplication.  It has different versions of realization.
+
+Matrix 
