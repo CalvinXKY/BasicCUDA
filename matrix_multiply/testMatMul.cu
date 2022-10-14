@@ -3,6 +3,10 @@
  *   A x B   A[hA, wA] B[hB, wB]
  * e.g. ./matMul wA=1000 hA=312 wB=11 hB=1000
  *
+ *  This demo code might be stale with the development of CUDA. 
+ *  To use the latest API operations, you could see NVIDIA guide: 
+ *      https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html
+ *     https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__MEMORY.html#group__CUDART__MEMORY 
  * Author: kevin.xie
  * Email: kaiyuanxie@yeah.net
  */

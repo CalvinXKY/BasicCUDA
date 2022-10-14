@@ -1,6 +1,6 @@
+
 #include "matMul.h"
 #include <cublas_v2.h>
-
 
 /**
  * Run a simple test of matrix multiplication using CUBLAS Sgemm.

@@ -60,10 +60,7 @@ template <int BLOCK_SIZE> __global__ void MatMulKernel2DAnySize(float *C, float 
             } else {
                 Bs[ty][tx] = 0.0;
             }
-
-            // Bs[ty][tx] = B[idx];
-
-            // Bs[ty][tx] = B[idx];
+            
             // Synchronize to make sure the matrices are loaded
             __syncthreads();
 
