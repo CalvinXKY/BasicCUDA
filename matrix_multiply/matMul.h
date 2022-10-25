@@ -1,5 +1,3 @@
-
-
 #pragma once
 // System includes
 #include <assert.h>
