@@ -13,5 +13,11 @@ make
 ./matMul
 ```
 
+### Chinese Help Doc（中文帮助文档）
+[GPU内存(显存)的理解与基本使用](https://zhuanlan.zhihu.com/p/462191421)
+
+[CUDA编程：矩阵乘运算从CPU到GPU](https://zhuanlan.zhihu.com/p/573271688)
+
+
 
 

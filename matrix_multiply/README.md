@@ -110,8 +110,7 @@ sizeC, need to avoid illegal memory access. The common method:
     
     while (threadIdx < sizeC) { }
     
-The code snippet as followï¼š
-
+The code snippet as followï¼?
 ```cu
 __global__ void MatMulKernel1D(float *C, float *A, float *B, const int wh, const int wC, const int hC)
 {
@@ -187,7 +186,7 @@ while (thIdx < wA) {
 ```
 Note: The max size shared memory is different in different GPU architectures.
 
-When test â€œ1D Block Kernel with Shared Memoryâ€ you will find it is slower than 
+When test â€?D Block Kernel with Shared Memoryâ€?you will find it is slower than 
 previous method (without shared memory) in most scenarios. Definitely, the cost time of 
  using shared memory is bigger than reducing time in this case. 
 However, there is still has space for optimization, such as 2D block with shm.
@@ -323,3 +322,8 @@ Certainly, there is higher performance way to execute matrix multiply, such as C
 It is easy to use "cublasSgemm" API to get result.  There is a test example in "./matMulCublasKernel.cu". 
 The throughput of CUBLAS is usual better than one's kernel. However, it has its limitation and not always faster
 whether to use it or not, depending on your scenario.
+
+
+### Chinese Doc
+
+[CUDA±à³Ì£º¾ØÕó³ËÔËËã´ÓCPUµ½GPU](https://zhuanlan.zhihu.com/p/573271688)
