@@ -106,3 +106,10 @@ Sum array without shared memory.    Elapsed time: 0.011756 ms
 
 ```
 Note: The size of elements of arrary could affects the result. Try it as free.
+
+
+### Chinese Doc
+
+[GPU内存(显存)的理解与基本使用](https://zhuanlan.zhihu.com/p/462191421)
+
+  
