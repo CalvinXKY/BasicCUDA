@@ -3,4 +3,4 @@ from torch.utils.cpp_extension import BuildExtension, CUDAExtension
 
 setup(name='my_extension',
       ext_modules=[CUDAExtension('my_extension', ['my_extension.cpp']),],
-      mdclass={'build_ext': BuildExtension})
+      cmdclass={'build_ext': BuildExtension})
