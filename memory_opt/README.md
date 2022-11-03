@@ -37,7 +37,7 @@ $ nvcc -lcuda sharedMemory.cu -o testSharedMemory
 ### Run
 Run them all (it will build all exe files if there are not):
 ```
-sh run.sh
+$ sh run.sh
 ```
 
 ### Host and device data trans.
@@ -58,7 +58,7 @@ Usage -device=n (n >= 0 for deviceID)
 
 Run with specify parameters, e.g:
 ```bash
-./testDevice2Device -deviceA=0 -deviceB=3
+$ ./testDevice2Device -deviceA=0 -deviceB=3
 ```
 Set GPU0 and GPU3 for this test. You could set the iteration and transfer data size. Use "help" for detail
 ```bash
@@ -77,7 +77,7 @@ In some scenarios, data used only once, called stream data, for calculation. It 
 In this case, select "vector add" to show the advantage of the zero copy.
 
 ```
-./testZeroCopy
+$ ./testZeroCopy
 ```
 Note: When increase iteration number, the throughput might be different.
 The reason is that CUDA data transfer API costs a lot of time.
@@ -96,7 +96,7 @@ Shared memory could increase the speed of calculation in some scenarios. In this
 
 Run:
 ```bash
-./testSharedMemory
+$ ./testSharedMemory
 ```
 V100 result example:
 ```bash

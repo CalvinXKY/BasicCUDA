@@ -12,8 +12,8 @@ Requirements:
 
 Run:
 ```
-cd easyJIT
-python run.py
+$ cd easyJIT
+$ python run.py
 ```
 
 Common issues:
@@ -33,9 +33,9 @@ know the process. The key elements as follows:
 
 Run:
 ```
-cd easySetup
-python setup install
-python run.py
+$ cd easySetup
+$ python setup install
+$ python run.py
 ```
 Use setup method does not need to compile code every time. It installs the extension as a
 python module. 
@@ -44,8 +44,8 @@ python module.
 
 Run:
 ```
-cd sumArray
-python run.py
+$ cd sumArray
+$ python run.py
 ```
 
 This example shows how to use CUDA kernel to accomplish custom sum of a tensor array.
@@ -68,13 +68,13 @@ The custom define sum func test:
 
 Run custom lltm with JIT:
 ```
-cd lltmDemo
-python run_custom_lltm.py
+$ cd lltmDemo
+$ python run_custom_lltm.py
 ```
 
 Run PyTorch API baseline:
 ```
-python run_baseline.py
+$ python run_baseline.py
 ```
 Result e.g.:
 ```
