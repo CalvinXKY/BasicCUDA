@@ -85,3 +85,6 @@ Forward: min:0.130 ms avg:0.134 ms | Backward min: 0.240 ms avg: 0.246 ms
 PyTorch baseline result:
 Forward: min:0.121 ms avg:0.142 ms | Backward min: 0.427 ms avg: 0.483 ms
 ```
+
+### Chinese Doc
+[PyTorch Custom CUDA/C++](https://zhuanlan.zhihu.com/p/579395211) 
