@@ -10,6 +10,16 @@ Managed memory:
 $ nvcc -lcuda um_demo.cu -o um_demo
 ```
 
+Zero copy:
+```
+$ nvcc -lcuda -I../memory_opt/ zero_copy.cu -o zero_run
+```
+
+Shared memory:
+```
+$ nvcc -lcuda -I../memory_opt/ shared_mem.cu -o smem_run
+```
+
 ## run
 ```
 $ ./print_any
