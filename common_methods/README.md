@@ -20,6 +20,11 @@ Shared memory:
 $ nvcc -lcuda -I../memory_opt/ shared_mem.cu -o smem_run
 ```
 
+Multi streams:
+```
+$ nvcc -lcuda streams.cu -o streamd_demo
+```
+
 ## run
 ```
 $ ./print_any
