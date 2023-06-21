@@ -18,7 +18,6 @@ template <typename T> void check(T result, char const *const func, const char *c
 #define N   (1024*1024)
 #define FULL_DATA_SIZE   (N*200)
 
-
 __global__ void kernel(int *a, int *b, int *c) {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
     if (idx < N) {
@@ -30,7 +29,7 @@ __global__ void kernel(int *a, int *b, int *c) {
     }
 }
 
-void singleStream() {
+void singleStream(bool isAsync) {
         cudaEvent_t     start, stop;
     float           elapsedTime;
 
@@ -72,23 +71,42 @@ void singleStream() {
     checkCudaErrors(cudaEventRecord(start, 0));
     // now loop over full data, in bite-sized chunks
     for (int i=0; i<FULL_DATA_SIZE; i+= N) {
-        // copy the locked memory to the device, async
-        checkCudaErrors(cudaMemcpyAsync(dev_a, host_a+i,
-                                       N * sizeof(int),
-                                       cudaMemcpyHostToDevice,
-                                       stream));
-        checkCudaErrors(cudaMemcpyAsync(dev_b, host_b+i,
-                                       N * sizeof(int),
-                                       cudaMemcpyHostToDevice,
-                                       stream));
 
-        kernel<<<N/256,256,0,stream>>>(dev_a, dev_b, dev_c);
+        if (isAsync) {
+            // copy the locked memory to the device;
+            checkCudaErrors(cudaMemcpy(dev_a, host_a+i,
+                                    N * sizeof(int),
+                                    cudaMemcpyHostToDevice));
+            checkCudaErrors(cudaMemcpy(dev_b, host_b+i,
+                                    N * sizeof(int),
+                                    cudaMemcpyHostToDevice));
 
-        // copy the data from device to locked memory
-        checkCudaErrors(cudaMemcpyAsync(host_c+i, dev_c,
-                                       N * sizeof(int),
-                                       cudaMemcpyDeviceToHost,
-                                       stream));
+            kernel<<<N/256,256,0,stream>>>(dev_a, dev_b, dev_c);
+
+            // copy the data from device to locked memory
+            checkCudaErrors(cudaMemcpy(host_c+i, dev_c,
+                                    N * sizeof(int),
+                                    cudaMemcpyDeviceToHost));
+        } else {
+            // copy the locked memory to the device, async
+            checkCudaErrors(cudaMemcpyAsync(dev_a, host_a+i,
+                                        N * sizeof(int),
+                                        cudaMemcpyHostToDevice,
+                                        stream));
+            checkCudaErrors(cudaMemcpyAsync(dev_b, host_b+i,
+                                        N * sizeof(int),
+                                        cudaMemcpyHostToDevice,
+                                        stream));
+
+            kernel<<<N/256,256,0,stream>>>(dev_a, dev_b, dev_c);
+
+            // copy the data from device to locked memory
+            checkCudaErrors(cudaMemcpyAsync(host_c+i, dev_c,
+                                        N * sizeof(int),
+                                        cudaMemcpyDeviceToHost,
+                                        stream));
+        }
+
 
     }
     // copy result chunk from locked to full buffer
@@ -99,7 +117,11 @@ void singleStream() {
     checkCudaErrors(cudaEventSynchronize(stop));
     checkCudaErrors(cudaEventElapsedTime(&elapsedTime,
                                         start, stop));
-    printf("Single stream elapsed time::  %3.1f ms\n", elapsedTime);
+    if (isAsync) {
+        printf("Single stream with async copy. Elapsed time:  %3.1f ms\n", elapsedTime);
+    } else {
+        printf("Single stream. Elapsed time:  %3.1f ms\n", elapsedTime);
+    }
 
     // cleanup the streams and memory
     checkCudaErrors(cudaFreeHost(host_a));
@@ -109,9 +131,9 @@ void singleStream() {
     checkCudaErrors(cudaFree(dev_b));
     checkCudaErrors(cudaFree(dev_c));
     checkCudaErrors(cudaStreamDestroy(stream));
-}        
+}
 
-void doubleStream() {
+void doubleStreamAsyncCopy() {
     cudaEvent_t     start, stop;
     float           elapsedTime;
 
@@ -180,7 +202,7 @@ void doubleStream() {
                                        cudaMemcpyHostToDevice,
                                        stream1));
 
-        // enqueue kernels in stream0 and stream1   
+        // enqueue kernels in stream0 and stream1
         kernel<<<N/256,256,0,stream0>>>(dev_a0, dev_b0, dev_c0);
         kernel<<<N/256,256,0,stream1>>>(dev_a1, dev_b1, dev_c1);
 
@@ -202,7 +224,7 @@ void doubleStream() {
     checkCudaErrors(cudaEventSynchronize(stop));
     checkCudaErrors(cudaEventElapsedTime(&elapsedTime,
                                         start, stop));
-    printf("Double stream elapsed time:  %3.1f ms\n", elapsedTime);
+    printf("Double stream with async copy. Elapsed time:  %3.1f ms\n", elapsedTime);
 
     // cleanup the streams and memory
     checkCudaErrors(cudaFreeHost(host_a));
@@ -227,11 +249,10 @@ int main(void) {
         printf("Device will not handle overlaps, so no speed up from streams\n");
         return 0;
     } else {
-        printf("asyncEngineCount:%d\n", prop.asyncEngineCount);
+        printf("The asyncEngineCount in device is:%d\n", prop.asyncEngineCount);
     }
-
-    singleStream();
-    doubleStream();
+    singleStream(false);
+    singleStream(true);
+    doubleStreamAsyncCopy();
     return 0;
 }
-
