@@ -55,7 +55,9 @@ int MatMulCublasTest(int argc, char **argv, int blockSize, int iterNum, const di
     const float beta = 0.0f;
     cublasHandle_t handle;
     checkCudaErrors(cublasCreate(&handle));
-    
+
+    cublasSetStream(handle, stream);
+
     // Create and start timer
     printf("Computing result using CUBLAS Sgemmm Kernel. \n");
     checkCudaErrors(cublasSgemm(
