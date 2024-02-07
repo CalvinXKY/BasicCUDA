@@ -13,3 +13,15 @@ You would get an "allocator_test" exe file, then run it.
 ```
 ./allocator_test
 ```
+
+Add GPU architecture: change SM in Makefile: L255
+
+```shell
+SMS ?= 35 37 50 52 60 61 70 75 80 86 90
+```
+eg. SMS=80 means supports A100/A800 
+
+SMS=90, H100/H800
+
+
+Note: Your version CUDA nvcc might get "unsupported gpu architecture 'compute_35'" error. Delete SMS 35.
