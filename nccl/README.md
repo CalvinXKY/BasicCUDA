@@ -1,5 +1,12 @@
 # NCCL C++ Examples
 
+| **Cases**                  | **Node require** | **Description**                                           |  
+|----------------------------|------------------|-----------------------------------------------------------|
+| one_device_per_thread      | 1                | One Device(1 GPU) per Process or Thread                   |
+| multi_devices_per_thread   | 1                | Multiple Devices(more than one GPU) per Process or Thread |
+| nonblocking_double_streams | 1                | One rank has two communicators.                           |
+| nccl_with_mpi              | 1                | Run with Open MPI                                         |
+| node_server/node_client    | 2                | Using socket for init                                     |
 
 
 ## Compile

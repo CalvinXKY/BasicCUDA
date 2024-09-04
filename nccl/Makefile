@@ -231,7 +231,7 @@ endif
 
 ################################################################################
 
-all: nonblocking_double_streams node_server node_client one_devices_per_thread multi_devices_per_thread
+all: nonblocking_double_streams node_server node_client one_device_per_thread multi_devices_per_thread
 
 check.deps:
 ifeq ($(SAMPLE_ENABLED),0)
@@ -249,7 +249,7 @@ node_server: node_server.cu
 node_client: node_client.cu
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 
-one_devices_per_thread: one_devices_per_thread.cu
+one_device_per_thread: one_device_per_thread.cu
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 
 multi_devices_per_thread: multi_devices_per_thread.cu
@@ -261,7 +261,7 @@ nccl_with_mpi: nccl_with_mpi.cu
 mpi: nccl_with_mpi
 
 clean:
-	rm -f nonblocking_double_streams node_server node_client nccl_with_mpi one_devices_per_thread multi_devices_per_thread
+	rm -f nonblocking_double_streams node_server node_client nccl_with_mpi one_device_per_thread multi_devices_per_thread
 	
 clobber: clean
 
