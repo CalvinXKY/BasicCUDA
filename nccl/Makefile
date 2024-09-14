@@ -231,7 +231,7 @@ endif
 
 ################################################################################
 
-all: nonblocking_double_streams node_server node_client one_device_per_thread multi_devices_per_thread
+all: nonblocking_double_streams node_server node_client one_device_per_thread multi_devices_per_thread alltoall_test
 
 check.deps:
 ifeq ($(SAMPLE_ENABLED),0)
@@ -255,14 +255,22 @@ one_device_per_thread: one_device_per_thread.cu
 multi_devices_per_thread: multi_devices_per_thread.cu
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 
+alltoall_test: alltoall.cu
+	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
+
 nccl_with_mpi: nccl_with_mpi.cu
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(MPI_INCLUDES) $(GENCODE_FLAGS) -o $@ $+ $(MPI_LIBRARIES)
 
 mpi: nccl_with_mpi
 
+run:
+	./nonblocking_double_streams && ./one_device_per_thread && ./multi_devices_per_thread && ./alltoall_test
+
 clean:
-	rm -f nonblocking_double_streams node_server node_client nccl_with_mpi one_device_per_thread multi_devices_per_thread
+	rm -f nonblocking_double_streams node_server node_client nccl_with_mpi one_device_per_thread multi_devices_per_thread alltoall_test
 	
 clobber: clean
+
+test: clean all run clean
 
 .PHONY: all clean clobber mpi

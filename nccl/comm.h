@@ -39,6 +39,8 @@ std::string server_hostname = "127.0.0.1";
 int server_port = 8099;
 int my_nranks = 6;
 
+typedef void *(*ops)(void *);
+
 #define DEBUG_PRINT(info)                       \
     if (if_debug && strcasecmp(if_debug, "0") != 0) {    \
         printf("DEUBG INFO: %s\n", info); \
@@ -91,4 +93,35 @@ void env_init(int argc, char* argv[])
         std::cout << "The hostport: " << options["--port"] << std::endl;
         server_port = std::stoi(options["--port"]);
     }
+}
+
+static size_t wordSize(ncclDataType_t type) {
+  switch(type) {
+    case ncclChar:
+#if NCCL_MAJOR >= 2
+    //case ncclInt8:
+    case ncclUint8:
+#endif
+      return 1;
+    case ncclHalf:
+#if defined(__CUDA_BF16_TYPES_EXIST__)
+    case ncclBfloat16:
+#endif
+    //case ncclFloat16:
+      return 2;
+    case ncclInt:
+    case ncclFloat:
+#if NCCL_MAJOR >= 2
+    //case ncclInt32:
+    case ncclUint32:
+    //case ncclFloat32:
+#endif
+      return 4;
+    case ncclInt64:
+    case ncclUint64:
+    case ncclDouble:
+    //case ncclFloat64:
+      return 8;
+    default: return 0;
+  }
 }
