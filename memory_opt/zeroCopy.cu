@@ -115,7 +115,10 @@ float vectorAddViaZeroCopy(const unsigned int numElements, const unsigned int it
     int threadsPerBlock = 256;
     int blocksPerGrid = (numElements + threadsPerBlock - 1) / threadsPerBlock;
 
-    checkCudaErrors(cudaSetDeviceFlags(cudaDeviceMapHost));
+    // If the current device has been set, recall will fail with the error cudaErrorSetOnActiveProcess.
+    cudaSetDeviceFlags(cudaDeviceMapHost);
+    cudaGetLastError();
+    
     // Allocate the host input vector A, B, C
     float *h_A = NULL;
     float *h_B = NULL;
