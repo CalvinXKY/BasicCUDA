@@ -15,6 +15,14 @@
 #define STRNCASECMP strncasecmp
 #endif
 
+#define checkCuBLASErrors(status) \
+    do { \
+        if (status != CUBLAS_STATUS_SUCCESS) { \
+            fprintf(stderr, "CUBLAS error: %d at %s:%d\n", status, __FILE__, __LINE__); \
+            exit(EXIT_FAILURE); \
+        } \
+    } while (0)
+
 template <typename T> void check(T result, char const *const func, const char *const file, int const line)
 {
     if (result) {

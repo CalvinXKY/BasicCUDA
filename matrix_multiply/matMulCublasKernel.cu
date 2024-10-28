@@ -54,11 +54,11 @@ int MatMulCublasTest(int argc, char **argv, int blockSize, int iterNum, const di
     const float alpha = 1.0f;
     const float beta = 0.0f;
     cublasHandle_t handle;
-    checkCudaErrors(cublasCreate(&handle));
-    
+    checkCuBLASErrors(cublasCreate(&handle));
+
     // Create and start timer
     printf("Computing result using CUBLAS Sgemmm Kernel. \n");
-    checkCudaErrors(cublasSgemm(
+    checkCuBLASErrors(cublasSgemm(
         handle, CUBLAS_OP_N, CUBLAS_OP_N, dimsB.x, dimsA.y,
         dimsA.x, &alpha, d_B, dimsB.x, d_A,
         dimsA.x, &beta, d_C, dimsB.x));
@@ -73,7 +73,7 @@ int MatMulCublasTest(int argc, char **argv, int blockSize, int iterNum, const di
     for (int j = 0; j < iterNum; j++) {
       // note cublas is column primary!
       // need to transpose the order
-      checkCudaErrors(cublasSgemm(
+      checkCuBLASErrors(cublasSgemm(
           handle, CUBLAS_OP_N, CUBLAS_OP_N, dimsB.x, dimsA.y,
           dimsA.x, &alpha, d_B, dimsB.x, d_A,
           dimsA.x, &beta, d_C, dimsB.x));
@@ -99,7 +99,7 @@ int MatMulCublasTest(int argc, char **argv, int blockSize, int iterNum, const di
     // Copy result from device to host
     checkCudaErrors(cudaMemcpyAsync(h_C, d_C, mem_size_C, cudaMemcpyDeviceToHost, stream));
     checkCudaErrors(cudaStreamSynchronize(stream));
-    checkCudaErrors(cublasDestroy(handle));
+    checkCuBLASErrors(cublasDestroy(handle));
 
     bool ret = ResultCheck(h_C, static_cast<int>(dimsC.x * dimsC.y), dimsA.x, valB);
 
