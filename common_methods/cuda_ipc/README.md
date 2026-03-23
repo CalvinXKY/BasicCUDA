@@ -112,3 +112,62 @@ NVIDIA-SMI 570.172.08             Driver Version: 570.172.08     CUDA Version: 1
 [receiver] waiting handle file: /tmp/ipc_demo.handle.bin
 [receiver] modify done, wrote flag: /tmp/ipc_demo.done.flag
 ```
+
+
+# 跨卡IPC远程读写示例
+
+对应代码：`cuda_ipc_cross_gpu_demo.cu`。
+
+过程：
+
+- sender在`src-device`（例如GPU0）分配显存并导出IPC句柄；
+- receiver在`access-device`（例如GPU1）打开该句柄；
+- receiver在GPU1上发kernel，直接修改GPU0上的那块共享显存（远程写）；
+- sender在GPU0读回结果并校验变化。
+
+### 跨卡模式的关键点
+
+- 能否跨卡远程访问，取决于设备拓扑与P2P能力；
+- 示例里会先调用`cudaDeviceCanAccessPeer(access_device, src_device)`做检查；
+- 若不支持，会明确报错并退出。
+
+### 编译（Linux）
+
+```bash
+nvcc -std=c++14 -O2 cuda_ipc_cross_gpu_demo.cu -o cuda_ipc_cross_gpu_demo
+```
+
+### 运行（两个终端）
+
+终端1（先启动receiver）：
+
+```bash
+./cuda_ipc_cross_gpu_demo --mode receiver --prefix /tmp/ipc_xgpu --src-device 0 --access-device 1
+```
+
+终端2（再启动sender）：
+
+```bash
+./cuda_ipc_cross_gpu_demo --mode sender --prefix /tmp/ipc_xgpu --src-device 0 --access-device 1
+```
+
+### 输出
+
+- receiver日志会显示已在`access-device`完成远程写；
+- sender日志会显示读回值由`i`变为`i + 1000`；
+- 最终输出`PASS: cross-GPU IPC remote write verified`，即可证明跨卡IPC远程读写成功。
+
+
+发送端：
+```
+[sender] wrote handle: /tmp/ipc_xgpu.handle.bin
+[sender] src-device=0, waiting remote write from access-device=1
+[sender] values after receiver write: 1000, 1001, 1002, 1003, 1004, 1005, 1006, 1007
+[sender] PASS: cross-GPU IPC remote write verified
+```
+
+接收端：
+'''
+[receiver] waiting handle: /tmp/ipc_xgpu.handle.bin
+[receiver] remote write done on access-device=1, modified src-device=0 memory
+'''
